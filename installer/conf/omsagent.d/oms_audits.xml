@@ -1,0 +1,1145 @@
+<data>
+ <audits BaselineId="OMS.Linux.1" BaseOrigId="1">
+  <audit
+    description="The nodev option should be enabled for all removable media."
+    msid="2.1"
+    cceid="CCE-3522-0"
+    severity="Important"
+    impact="An attacker could mount a special device (e.g. block or character device) via removable media"
+    remediation="Add the nodev option to the fourth field (mounting options) in /etc/fstab">
+    <check distro="*" command="CheckNoMatchingLines" filter="^[^#]\S+\s+\S*(floppy|cdrom)" regex="nodev" path="/etc/fstab"/>
+  </audit>
+
+  <audit
+    description="The noexec option should be enabled for all removable media."
+    msid="2.2"
+    cceid="CCE-4275-4"
+    severity="Important"
+    impact="An attacker could load executable file via removable media"
+    remediation="Add the noexec option to the fourth field (mounting options) in /etc/fstab">
+    <check distro="*" command="CheckNoMatchingLines" filter="^[^#]\S+\s+\S*(floppy|cdrom)" regex="noexec" path="/etc/fstab"/>
+  </audit>
+
+  <audit
+    description="The nosuid option should be enabled for all removable media."
+    msid="2.3"
+    cceid="CCE-4042-8"
+    severity="Important"
+    impact="An attacker could load files that run with an elevated security context via removable media"
+    remediation="Add the nosuid option to the fourth field (mounting options) in /etc/fstab">
+    <check distro="*" command="CheckNoMatchingLines" filter="^[^#]\S+\s+\S*(floppy|cdrom)" regex="nosuid" path="/etc/fstab"/>
+  </audit>
+
+  <audit
+   description = "The nodev/nosuid option should be enabled for all NFS mounts."
+   msid="5"
+   cceid="CCE-4368-7"
+   severity="Important"
+   impact="An attacker could load files that run with an elevated security context or special devices via remote file system"
+   remediation="Add the nosuid and nodev options to the fourth field (mounting options) in /etc/fstab">
+   <check distro="*" command="CheckNoMatchingLines" filter="nfs\s+" regex="nosuid|nodev" path="/etc/fstab"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (cramfs)"
+   msid="6.1"
+   cceid="CCE-14089-7"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in cramfs to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables cramfs">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install cramfs" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (freevxfs)"
+   msid="6.2"
+   cceid="CCE-14457-6"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in freevxfs to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables freevxfs">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install freevxfs" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (hfs)"
+   msid="6.3"
+   cceid="CCE-15087-0"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in hfs to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables hfs">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install hfs" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (hfsplus)"
+   msid="6.4"
+   cceid="CCE-14093-9"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in hfsplus to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables hfsplus">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install hfsplus" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (jffs2)"
+   msid="6.5"
+   cceid="CCE-14853-6"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in jffs2 to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables jffs2">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install jffs2" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable the installation and use of file systems that are not required (squashfs)"
+   msid="6.6"
+   cceid="CCE-14118-4"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in squashfs to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'. This will add a file to the /etc/modprob.d directory that disables squashfs">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install squashfs" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "All available package updates should be installed."
+   msid="7"
+   cceid="CCE-XXXXX-1"
+   severity="Critical"
+   impact="Any security updates that have not been installed could allow an attacker to gain access or elevate privilege."
+   remediation="Use the OSPatching Extension or system automatic update feature to automatically keep patches up to date.">
+   <check distro="*" command="CheckAvailableUpdates" />
+  </audit>
+
+  <audit
+   description = "/etc/shadow file permissions should be set to 0400 (or 0000 if supported)"
+   msid="11.1"
+   cceid="CCE-4130-1"
+   severity="Critical"
+   impact="An attacker that can retrieve or manipulate hashed passwords from /etc/shadow if it is not correctly secured."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-etc-shadow-perms'. This will set the permissions and ownership of /etc/shadow*">
+   <check distro="*" command="CheckFileStats" path="/etc/shadow" owner="root" group="root,shadow" mode-mask="07177"/>
+  </audit>
+
+  <audit
+   description = "/etc/shadow- file permissions should be set to 0400 (or 0000 if supported)"
+   msid="11.2"
+   cceid="CCE-4130-1"
+   severity="Critical"
+   impact="An attacker that can retrieve or manipulate hashed passwords from /etc/shadow- if it is not correctly secured."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-etc-shadow-perms'. This will set the permissions and ownership of /etc/shadow*">
+   <check distro="!SLES=11" command="CheckFileStats" path="/etc/shadow-" owner="root" group="root,shadow" mode-mask="07177"/>
+   <check distro="SLES=11" command="CheckFileStats" path="/etc/shadow.old" owner="root" group="root,shadow" mode-mask="07177"/>
+  </audit>
+
+  <audit
+   description = "/etc/gshadow file permissions should be set to 0400 (or 0000 if supported)"
+   msid="11.3"
+   cceid="CCE-3932-1"
+   severity="Critical"
+   impact="An attacker could join security groups if this file is not properly secured"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-etc-gshadow-perms'. This will set the permissions and ownership of /etc/gshadow">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/gshadow" owner="root" group="root,shadow" mode-mask="07177"/>
+  </audit>
+
+  <audit
+   description = "/etc/passwd file permissions should be 0644"
+   msid="12.1"
+   cceid="CCE-3566-7"
+   severity="Critical"
+   impact="An attacker could modify userIDs and login shells"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-etc-passwd-perms'. This will set the permissions and ownership of /etc/passwd">
+   <check distro="*" command="CheckFileStats" path="/etc/passwd" expect="root root 644" />
+  </audit>
+
+  <audit
+   description = "/etc/group file permissions should be 0644"
+   msid="12.2"
+   cceid="CCE-3967-7"
+   severity="Critical"
+   impact="An attacker could elevate privileges by modifying group membership"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-etc-group-perms'. This will set the permissions and ownership of /etc/group">
+   <check distro="*" command="CheckFileStats" path="/etc/group" expect="root root 644" />
+  </audit>
+
+  <audit
+   description = "All files ownership should be mapped to an existing user and group"
+   msid="17"
+   cceid="CCE-3573-3"
+   severity="Warning"
+   impact="Files that are not owned by a known user/group may be owned by an attacker"
+   remediation="Use the chown command to set an owner and group for files">
+   <check distro="*" command="CheckFileOwnership"/>
+  </audit>
+
+  <audit
+   description = "Restrict Root Logins To system Console - '/etc/securetty contains only console and tty1'"
+   msid="20"
+   cceid="CCE-3485-0"
+   severity="Critical"
+   impact="Activities performed by a direct root login cannot be attributed to any user. This should be reserved for emergency purposes."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r restrict-root-login'">
+   <check distro="*" command="CheckNoMatchingLines" filter="^((#|tty|console).*|\s*)$" filter_exclude="true" regex="^.+$" path="/etc/securetty"/>
+  </audit>
+
+  <audit
+   description = "Access to the root account via su should be restricted to the 'root' group"
+   msid="21"
+   cceid="CCE-15047-4"
+   severity="Critical"
+   impact="An attacker could escalate permissions by password guessing if su is not restricted to users in the root group."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-su-permissions'. This will add the line 'auth required pam_wheel.so use_uid' to the file '/etc/pam.d/su'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*auth\s+required\s+pam_wheel.so(\s+.*)?\suse_uid" path="/etc/pam.d/su"/>
+  </audit>
+
+  <audit
+   description = "The 'root' group should exist, and contain all members who can su to root"
+   msid="22"
+   cceid="CCE-14088-9"
+   severity="Critical"
+   impact="An attacker could escalate permissions by password guessing if su is not restricted to users in the root group."
+   remediation="Create the root group via the command 'groupadd -g 0 root'">
+   <check distro="*" command="CheckMatchingLines" regex="^root:x:0:" path="/etc/group"/>
+  </audit>
+
+  <audit
+   description = "Login access to non-root system accounts is disabled - '/etc/passwd accounts with uid -lt 500 do not use a valid login shell'"
+   msid="23.1"
+   cceid="CCE-3987-5"
+   severity="Critical"
+   impact="An attacker who compromises a system account will be able to login and execute arbitrary commands under this account."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-non-root-system-login'. This will disable login for non-root system accounts.">
+   <check distro="*" command="CheckNoMatchingLines" filter_exclude="true" filter="^([^:]*:){5}(.*(root|home).*|[^:]*:(/dev/null|/bin/false|/sbin/nologin|/usr/sbin/nologin)).*$" regex="^.+:x:([1-9]|[1-9][0-9]|[1-4][0-9][0-9]):" path="/etc/passwd"/>
+  </audit>
+
+  <audit
+   description = "There are no accounts without passwords"
+   msid="23.2"
+   cceid="CCE-4238-2"
+   severity="Critical"
+   impact="An attacker can login to accounts with no password and execute arbitrary commands."
+   remediation="Use the passwd command to set passwords for all accounts">
+   <check distro="*" command="CheckNoMatchingLines" regex="^[^:]+::" path="/etc/shadow"/>
+  </audit>
+
+  <audit
+   description = "Accounts other than root must have unique UIDs greater than zero(0)"
+   msid="24"
+   cceid="CCE-4009-7"
+   severity="Critical"
+   impact="If an account other than root has uid zero, an attacker could compromise the account and gain root privileges."
+   remediation="Assign unique, non-zero uids to all non-root accounts using 'usermod -u'">
+   <check distro="*" command="CheckNoMatchingLines" filter="^root" regex="^[^:]:[^:]:0:" path="/etc/shadow"/>
+  </audit>
+
+  <audit
+   description = "Randomized placement of virtual memory regions should be enabled"
+   msid="25"
+   cceid="CCE-4146-7"
+   severity="Critical"
+   impact="An attacker could write executable code to known regions in memory resulting in elevation of privilege"
+   remediation="Add the value '1' or '2' to the file '/proc/sys/kernel/randomize_va_space'">
+   <check distro="*" command="CheckMatchingLines" regex="^(1|2)$" path="/proc/sys/kernel/randomize_va_space"/>
+  </audit>
+
+  <audit
+   description = "Kernel support for the XD/NX processor feature should be enabled"
+   msid="26"
+   cceid="CCE-4172-3"
+   severity="Critical"
+   impact="An attacker could cause a system to executable code from data regions in memory resulting in elevation of privilege."
+   remediation="Confirm the file '/proc/cpuinfo' contains the flag 'nx'">
+   <check distro="*" command="CheckMatchingLines" regex="^\s*flags.* nx[ $]" path="/proc/cpuinfo"/>
+  </audit>
+
+  <audit
+   description = " The '.' should not appear in root's $PATH"
+   msid="27.1"
+   cceid="CCE-3301-9"
+   severity="Critical"
+   impact="An attacker could elevate privileges by placing a malicious file in root's $PATH"
+   remediation="Modify the 'export PATH=' line in /root/.profile">
+   <check distro="*" command="CheckNotMatchEnvVariable" user="root" regex="^\.:|:\.:|:\.$" variable="PATH"/>
+  </audit>
+
+  <audit
+   description = "No Group/World-Writeable Directory In root's $PATH"
+   msid="27.2"
+   cceid="CCE-14957-5"
+   severity="Critical"
+   impact="An attacker could elevate privileges by placing a malicious file in root's $PATH"
+   remediation="Modify the 'export PATH=' line in /root/.profile or change folder permissions using chmod">
+   <check distro="*" command="CheckWriteableDirsInPath" user="root" />
+  </audit>
+
+  <audit
+   description = "User home directories should be mode 750 or more restrictive"
+   msid="28"
+   cceid="CCE-4090-7"
+   severity="Critical"
+   impact="An attacker could retrieve sensitive information from the home folders of other users."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-home-dir-permissions'. This will set home folder permissions to 750.">
+   <check distro="*" command="CheckHomeDirectoryPermissions"/>
+  </audit>
+
+  <audit
+   description = "The default umask for all users should be set to 077 in login.defs"
+   msid="29"
+   cceid="CCE-14847-8"
+   severity="Critical"
+   impact="An attacker could retrieve sensitive information from files owned by other users."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r set-default-user-umask'. This will add the line 'UMASK 077' to the file '/etc/login.defs'">
+   <check distro="*" command="CheckMatchingLines" regex="^UMASK\s+077" path="/etc/login.defs"/>
+  </audit>
+
+  <audit
+   description = "IP forwarding should be disabled. (net.ipv4.ip_forward = 0)"
+   msid="37"
+   cceid="CCE-3561-8"
+   severity="Important"
+   impact="An attacker could use this system to perform IP routing functions"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-ip-forward'">
+   <check distro="*" command="CheckMatchingLines" regex="^0$" path="/proc/sys/net/ipv4/ip_forward"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.all.accept_redirects = 0)"
+   msid="38.1"
+   cceid="CCE-4217-6"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.all\.accept_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.all.secure_redirects = 0)"
+   msid="38.2"
+   cceid="CCE-3472-8"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-secure-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.all\.secure_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.all.send_redirects = 0)"
+   msid="38.3"
+   cceid="CCE-4155-8"
+   severity="Critical"
+   impact="An attacker could use this system to send IP routing packets to other systems on the network."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-send-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.all\.send_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.default.accept_redirects = 0)"
+   msid="38.4"
+   cceid="CCE-4186-3"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.default\.accept_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.default.secure_redirects = 0)"
+   msid="38.5"
+   cceid="CCE-4151-7"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-secure-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.default\.secure_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv4.conf.default.send_redirects = 0)"
+   msid="38.6"
+   cceid="CCE-3339-9"
+   severity="Critical"
+   impact="An attacker could use this system to send IP routing packets to other systems on the network."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-send-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.default\.send_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv6.conf.all.accept_redirects = 0)"
+   msid="38.7"
+   cceid="CCE-4313-3"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv6\.conf\.all\.accept_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Sending ICMP redirects should be disabled for all interfaces. (net.ipv6.conf.default.accept_redirects = 0)"
+   msid="38.8"
+   cceid="CCE-4313-3"
+   severity="Critical"
+   impact="An attacker could alter this system's routing table, redirecting traffic to an alternate destination"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-redirects'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv6\.conf\.default\.accept_redirects\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Accepting source routed packets should be disabled for all interfaces. (net.ipv4.conf.all.accept_source_route = 0)"
+   msid="40.1"
+   cceid="CCE-4236-6"
+   severity="Critical"
+   impact="An attacker could redirect traffic for malicious purposes."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-source-route'">
+   <check distro="*" command="CheckMatchingLines" regex="^0$" path="/proc/sys/net/ipv4/conf/all/accept_source_route"/>
+  </audit>
+
+  <audit
+   description = "Accepting source routed packets should be disabled for all interfaces. (net.ipv6.conf.all.accept_source_route = 0)"
+   msid="40.2"
+   cceid="CCE-4236-6"
+   severity="Critical"
+   impact="An attacker could redirect traffic for malicious purposes."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-source-route'">
+   <check distro="*" command="CheckMatchingLines" regex="^0$" path="/proc/sys/net/ipv6/conf/all/accept_source_route"/>
+  </audit>
+
+  <audit
+   description = "The default setting for accepting source routed packets should be disabled for network interfaces. (net.ipv4.conf.default.accept_source_route = 0)"
+   msid="42.1"
+   cceid="CCE-4091-5"
+   severity="Critical"
+   impact="An attacker could redirect traffic for malicious purposes."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-source-route'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.default\.accept_source_route\s*=\s*0\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "The default setting for accepting source routed packets should be disabled for network interfaces. (net.ipv6.conf.default.accept_source_route = 0)"
+   msid="42.2"
+   cceid="CCE-4091-5"
+   severity="Critical"
+   impact="An attcker could redirect traffic for malicious purposes."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-accept-source-route'">
+   <check distro="*" command="CheckMatchingLines" regex="^0$" path="/proc/sys/net/ipv6/conf/default/accept_source_route"/>
+  </audit>
+
+  <audit
+   description = "Ignoring bogus ICMP responses to broadcasts should be enabled. (net.ipv4.icmp_ignore_bogus_error_responses = 1)"
+   msid="43"
+   cceid="CCE-4133-5"
+   severity="Critical"
+   impact="An attacker could perform an ICMP attack resulting in DoS"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-icmp-ignore-bogus-error-responses'">
+   <check distro="*" command="CheckMatchingLines" regex="^1$" path="/proc/sys/net/ipv4/icmp_ignore_bogus_error_responses"/>
+  </audit>
+
+  <audit
+   description = "Ignoring ICMP echo requests (pings) sent to broadcast / multicast addresses should be enabled. (net.ipv4.icmp_echo_ignore_broadcasts = 1)"
+   msid="44"
+   cceid="CCE-3644-2"
+   severity="Critical"
+   impact="An attacker could perform an ICMP attack resulting in DoS"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-icmp-echo-ignore-broadcasts'">
+   <check distro="*" command="CheckMatchingLines" regex="^1$" path="/proc/sys/net/ipv4/icmp_echo_ignore_broadcasts"/>
+  </audit>
+
+  <audit
+   description = "Logging of martian packets (those with impossible addresses) should be enabled for all interfaces. (net.ipv4.conf.all.log_martians = 1)"
+   msid="45.1"
+   cceid="CCE-4320-8"
+   severity="Critical"
+   impact="An attacker could send traffic from spoofed addresses without being detected"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-log-martians'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.all\.log_martians\s*=\s*1\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Logging of martian packets (those with impossible addresses) should be enabled for all interfaces. (net.ipv4.conf.default.log_martians = 1)"
+   msid="45.2"
+   cceid="CCE-4320-8"
+   severity="Critical"
+   impact="An attacker could send traffic from spoofed addresses without being detected"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-log-martians'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*net\.ipv4\.conf\.default\.log_martians\s*=\s*1\s*$" path="/etc/sysctl.conf"/>
+  </audit>
+
+  <audit
+   description = "Performing source validation by reverse path should be enabled for all interfaces. (net.ipv4.conf.all.rp_filter = 1)"
+   msid="46.1"
+   cceid="CCE-4080-8"
+   severity="Critical"
+   impact="The system will accept traffic from addresses that are unroutable."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-rp-filter'">
+   <check distro="*" command="CheckMatchingLines" regex="^1$" path="/proc/sys/net/ipv4/conf/all/rp_filter"/>
+  </audit>
+
+  <audit
+   description = "Performing source validation by reverse path should be enabled for all interfaces. (net.ipv4.conf.default.rp_filter = 1)"
+   msid="46.2"
+   cceid="CCE-3840-6"
+   severity="Critical"
+   impact="The system will accept traffic from addresses that are unroutable."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-rp-filter'">
+   <check distro="*" command="CheckMatchingLines" regex="^1$" path="/proc/sys/net/ipv4/conf/default/rp_filter"/>
+  </audit>
+
+  <audit
+   description = "TCP syncookies should be enabled. (net.ipv4.tcp_syncookies = 1)"
+   msid="47"
+   cceid="CCE-4265-5"
+   severity="Critical"
+   impact="An attacker could perform a DoS over TCP"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-tcp-syncookies'">
+   <check distro="*" command="CheckMatchingLines" regex="^1$" path="/proc/sys/net/ipv4/tcp_syncookies"/>
+  </audit>
+
+  <audit
+   description = "The system should not act as a network sniffer."
+   msid="48"
+   cceid="CCE-15013-6"
+   severity="Warning"
+   impact="An attacker may use promiscuous interfaces to sniff network traffic"
+   remediation="Promiscuous mode is enabled via a 'promisc' entry in '/etc/network/interfaces' or '/etc/rc.local.' Check both files and remove this entry.">
+   <check distro="*" command="CheckNoPromiscInterfaces"/>
+  </audit>
+
+  <audit
+   description = "All wireless interfaces should be disabled. (disabled)"
+   msid="49"
+   cceid="CCE-4276-2"
+   severity="Warning"
+   impact="An attacker could create a fake AP to intercept transmissions."
+   remediation="Confirm all wireless interfaces are disabled in '/etc/network/interfaces'">
+   <check distro="*" command="CheckNoWirelessInterfaces"/>
+  </audit>
+
+  <audit
+   description = "Disable support for DCCP."
+   msid="54"
+   cceid="CCE-14268-7"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in DCCP to compromise the system"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install\sdccp" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable support for SCTP."
+   msid="55"
+   cceid="CCE-14132-5"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in SCTP to compromise the system"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install\ssctp" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable support for RDS."
+   msid="56"
+   cceid="CCE-14027-7"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in RDS to compromise the system"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install\srds" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "Disable support for TIPC."
+   msid="57"
+   cceid="CCE-14911-2"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in TIPC to compromise the system"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-unnecessary-kernel-mods'">
+   <check distro="*" command="CheckMatchingLinesInDir" regex="^install\stipc" path="/etc/modprobe.d/"/>
+  </audit>
+
+  <audit
+   description = "The syslog or rsyslog package should be installed."
+   msid="61"
+   cceid="CCE-17742-8"
+   severity="Important"
+   impact="Reliability and security issues will not be logged, preventing proper diagnosis."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r install-syslog'. This will install the rsyslog package">
+   <check distro="*" command="CheckPackageInstalledRegexp" packagename="r?syslog" />
+  </audit>
+
+  <audit
+   description = "The syslog service should be enabled."
+   msid="62"
+   cceid="CCE-17698-2"
+   severity="Important"
+   impact="Reliability and security issues will not be logged, preventing proper diagnosis."
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-syslog'. This will enable and start the syslog service">
+   <check distro="!SLES=11" command="CheckServiceStatus" service="rsyslog" expect="running"/>
+   <check distro="SLES=11" command="CheckServiceStatus" service="syslog" expect="running"/>
+  </audit>
+
+  <audit
+   description = "File permissions for all rsyslog log files should be set to 640."
+   msid="63"
+   cceid="CCE-18095-0"
+   severity="Important"
+   impact="An attacker could cover up activity by manipulating logs"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r configure-syslog-file-create-mode'. This adds the line '$FileCreateMode 0640' to the file '/etc/rsyslog.conf'">
+   <check distro="!SLES" command="CheckMatchingLines" regex="^[\s]*.FileCreateMode\s+0640" path="/etc/rsyslog.conf"/>
+   <!-- SLES11 uses syslog-ng by default, the default for SLES12 is 640. -->
+  </audit>
+
+  <audit
+   description = "All rsyslog log files should be owned by the adm group."
+   msid="64"
+   cceid="CCE-18240-2"
+   severity="Important"
+   impact="An attacker could cover up activity by manipulating logs"
+   remediation="Add the line '$FileGroup adm' to the file '/etc/rsyslog.conf'">
+   <check distro="Ubuntu|Debian" command="CheckMatchingLines" regex="^[\s]*.FileGroup\s+adm" path="/etc/rsyslog.conf"/>
+   <!-- CentOS/RedHat/Oracle run rsyslog as root, and all files get root/root for owner/group -->
+   <!-- SLES uses syslog-ng -->
+  </audit>
+
+  <audit
+   description = "All rsyslog log files should be owned by the syslog user."
+   msid="65"
+   cceid="CCE-17857-4"
+   severity="Important"
+   impact="An attacker could cover up activity by manipulating logs"
+   remediation="Add the line '$FileOwner syslog' to the file '/etc/rsyslog.conf'">
+   <check distro="Ubuntu" command="CheckMatchingLines" regex="^[\s]*.FileOwner\s+syslog" path="/etc/rsyslog.conf"/>
+   <!-- Debian/CentOS/RedHat/Oracle run rsyslog as root, and all files get root/root for owner/group -->
+   <!-- SLES uses syslog-ng -->
+  </audit>
+
+  <audit
+   description = "Logs should be sent to a remote loghost (using mdsd service)"
+   msid="66"
+   cceid="CCE-17248-6"
+   severity="Important"
+   impact="An attacker could cover up activity by manipulating logs on the local system"
+   remediation="Start the mdsd service (service mdsd start)">
+   <check distro="*" command="CheckServiceStatus" service="mdsd" expect="running"/>
+  </audit>
+
+  <audit
+   description = "Rsyslog should not accept remote messages. (reject)"
+   msid="67"
+   cceid="CCE-17639-6"
+   severity="Important"
+   impact="An attacker could inject messages into syslog, causing a DoS or a distraction from other activity"
+   remediation="Remove the lines '$ModLoad imudp' and '$ModLoad imtcp' from the file '/etc/rsyslog.conf'">
+   <check distro="!SLES" command="CheckNoMatchingLines" regex="^[\s]*.ModLoad\s+im(udp|tcp)" path="/etc/rsyslog.conf"/>
+   <!-- SLES uses syslog-ng -->
+  </audit>
+
+  <audit
+   description = "The logrotate (syslog rotater) service should be enabled. (enabled)"
+   msid="68"
+   cceid="CCE-4182-2"
+   severity="Critical"
+   impact="Logfiles could grow unbounded and consume all disk space"
+   remediation="Install the logrotate package and confirm the logrotate cron entry is active (chmod 755 /etc/cron.daily/logrotate; chown root:root /etc/cron.daily/logrotate)">
+   <check distro="Ubuntu|Debian|SLES" command="CheckFileStats" path="/etc/cron.daily/logrotate" expect="root root 755"/>
+   <check distro="CentOS|RedHat|Oracle" command="CheckFileStats" path="/etc/cron.daily/logrotate" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "The rlogin service should be disabled."
+   msid="69"
+   cceid="CCE-3537-8"
+   severity="Critical"
+   impact="An attacker could gain access, bypassing strict authentication requirements"
+   remediation="Remove the inetd service.">
+   <check distro="*" command="CheckNoMatchingLinesIfExists" regex="^[\s\t]*login" path="/etc/inetd.conf"/>
+  </audit>
+
+  <audit
+   description = "The telnet service should be disabled. (disabled)"
+   msid="72"
+   cceid="CCE-3390-2"
+   severity="Critical"
+   impact="An attacker could eavesdrop or highjack unencrypted telnet sessions"
+   remediation="Remove or comment out the telnet entry in the file '/etc/inetd.conf'">
+   <check distro="*" command="CheckNoMatchingLinesIfExists" regex="^[\s\t]*telnet" path="/etc/inetd.conf"/>
+  </audit>
+
+  <audit
+   description = "All telnetd packages should be uninstalled."
+   msid="73"
+   cceid="CCE-4330-7"
+   severity="Critical"
+   impact="An attacker could eavesdrop or highjack unencrypted telnet sessions"
+   remediation="Uninstall any telnetd packages">
+   <check distro="*" command="CheckPackageNotInstalledRegexp" packagename="[a-z-]*telnetd" />
+  </audit>
+
+  <audit
+   description = "The rcp/rsh service should be disabled."
+   msid="74"
+   cceid="CCE-4141-8"
+   severity="Critical"
+   impact="An attacker could eavesdrop or highjack unencrypted sessions"
+   remediation="Remove or comment out the shell entry in the file '/etc/inetd.conf'">
+   <check distro="*" command="CheckNoMatchingLinesIfExists" regex="^[\s\t]*shell" path="/etc/inetd.conf"/>
+  </audit>
+
+  <audit
+   description = "The rsh-server package should be uninstalled."
+   msid="77"
+   cceid="CCE-4308-3"
+   severity="Critical"
+   impact="An attacker could eavesdrop or highjack unencrypted rsh sessions"
+   remediation="Uninstall the rsh-server package (apt-get remove rsh-server)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="rsh-server" />
+  </audit>
+
+  <audit
+   description = "The readahead-fedora package should be uninstalled."
+   msid="82"
+   cceid="CCE-4421-4"
+   severity="Informational"
+   impact="No substantial exposure, but also no substantial benefit"
+   remediation="Uninstall the readahead-fedora package (apt-get remove readahead-fedora)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="readahead-fedora" />
+  </audit>
+
+  <audit
+   description = "The bluetooth/hidd service should be disabled."
+   msid="84"
+   cceid="CCE-4355-4"
+   severity="Warning"
+   impact="An attacker could intercept or manipulate wireless communications."
+   remediation="Uninstall the bluetooth package (apt-get remove bluetooth)">
+   <check distro="*" command="CheckServiceDisabled" service="bluetooth"/>
+  </audit>
+
+  <audit
+   description = "The isdn service should be disabled."
+   msid="86"
+   cceid="CCE-4286-1"
+   severity="Warning"
+   impact="An attacker could use a modem to gain unauthorized access"
+   remediation="Uninstall the isdnutils-base package (apt-get remove isdnutils-base)">
+   <check distro="*" command="CheckServiceDisabled" service="isdnutils-base"/>
+  </audit>
+
+  <audit
+   description = "The isdnutils-base package should be uninstalled."
+   msid="87"
+   cceid="CCE-14825-4"
+   severity="Warning"
+   impact="An attacker could use a modem to gain unauthorized access"
+   remediation="Uninstall the isdnutils-base package (apt-get remove isdnutils-base)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="isdnutils-base" />
+  </audit>
+
+  <audit
+   description = "The kdump service should be disabled. (disabled)"
+   msid="88"
+   cceid="CCE-3425-6"
+   severity="Important"
+   impact="An attacker could analyze a previous system crash to retrieve sensitive information"
+   remediation="Uninstall the kdump-tools package (apt-get remove kdump-tools)">
+   <check distro="*" command="CheckServiceDisabled" service="kdump-tools"/>
+  </audit>
+
+  <audit
+   description = "Zeroconf networking should be disabled. (disabled)"
+   msid="89"
+   cceid="CCE-14054-1"
+   severity="Critical"
+   impact="An attacker could use abuse this to gain information on network systems, or spoof DNS requests due to flaws in its trust model"
+   remediation="Remove any 'ipv4ll' entries in the file '/etc/network/interfaces'">
+   <check distro="*" command="CheckNoMatchingLines" regex="ipv4ll" path="/etc/network/interfaces"/>
+  </audit>
+
+  <audit
+   description = "The crond service should be enabled. (enabled)"
+   msid="90"
+   cceid="CCE-4324-0"
+   severity="Critical"
+   impact="Cron is required by almost all systems for regular maintenance tasks"
+   remediation="Install the cron package (apt-get install -y cron) and confirm the file '/etc/init/cron.conf' contains the line 'start on runlevel [2345]'">
+   <check distro="Ubuntu|Debian|SLES" command="CheckServiceEnabled" service="cron"/>
+   <check distro="CentOS|RedHat|Oracle" command="CheckServiceEnabled" service="crond"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/anacrontab should be set to root:root 600."
+   msid="91"
+   cceid="CCE-4304-2"
+   severity="Critical"
+   impact="An attacker could manipulate this file to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-anacrontab-perms'. This sets the ownership and permissions on /etc/anacrontab">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/anacrontab" expect="root root 600"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/crontab should be set to root:root 600."
+   msid="92"
+   cceid="CCE-4388-5"
+   severity="Critical"
+   impact="An attacker could manipulate this file to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-crontab-perms'. This sets the ownership and permissions on /etc/crontab">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/crontab" expect="root root 600"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/cron.d should be set to root:root 700."
+   msid="93"
+   cceid="CCE-4250-7"
+   severity="Critical"
+   impact="An attacker could manipulate the contents of this folder to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-cron-file-perms'. This sets the ownership and permissions on /etc/cron.d">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/cron.d" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/cron.daily should be set to root:root 700."
+   msid="94"
+   cceid="CCE-4450-3"
+   severity="Critical"
+   impact="An attacker could manipulate the contents of this folder to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-cron-file-perms'. This sets ownership and permissions on /etc/cron.daily">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/cron.daily" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/cron.hourly should be set to root:root 700."
+   msid="95"
+   cceid="CCE-4106-1"
+   severity="Critical"
+   impact="An attacker could manipulate the contents of this folder to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-cron-file-perms'. This sets ownership and permissions on /etc/cron.hourly">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/cron.hourly" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/cron.monthly should be set to root:root 700."
+   msid="96"
+   cceid="CCE-4251-5"
+   severity="Critical"
+   impact="An attacker could manipulate the contents of this folder to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-cron-file-perms'. This sets ownership and permissions on /etc/cron.monthly">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/cron.monthly" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "File permissions for /etc/cron.weekly should be set to root:root 700."
+   msid="97"
+   cceid="CCE-4203-6"
+   severity="Critical"
+   impact="An attacker could manipulate the contents of this folder to prevent scheduled tasks or execute malicious tasks"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r fix-cron-file-perms'. This sets ownership and permissions on /etc/cron.weekly">
+   <check distro="*" command="CheckFileStatsIfExists" path="/etc/cron.weekly" expect="root root 700"/>
+  </audit>
+
+  <audit
+   description = "The at daemon should be disabled. (disabled)"
+   msid="105"
+   cceid="CCE-14466-7"
+   severity="Important"
+   impact="An attacker could use the at daemon to launch malicious code"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r remove-at'. This will remove the at package.">
+   <check distro="*" command="CheckServiceDisabled" service="atd"/>
+  </audit>
+
+  <audit
+   description = "SSH must be configured and managed to meet best practices. - '/etc/ssh/sshd_config Protocol = 2'"
+   msid="106.1"
+   cceid="CCE-4325-7"
+   severity="Critical"
+   impact="An attacker could use flaws in an earlier version of the SSH protocol to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r configure-ssh-protocol'. This will set 'Protocol 2' in the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*Protocol\s+2$" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "SSH must be configured and managed to meet best practices. - '/etc/ssh/sshd_config IgnoreRhosts = yes'"
+   msid="106.3"
+   cceid="CCE-4030-3"
+   severity="Critical"
+   impact="An attacker could use flaws in the Rhosts protocol to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r enable-ssh-ignore-rhosts'. This will add the line 'IgnoreRhosts yes' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*IgnoreRhosts\s+yes" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "SSH must be configured and managed to meet best practices. - '/etc/ssh/sshd_config RhostsAuthentication = no'"
+   msid="106.4"
+   cceid="CCE-4030-3"
+   severity="Critical"
+   impact="An attacker could use flaws in the RHosts protocol to gain access"
+   remediation="Remove the line 'RhostsAuthentication yes' from the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckNoMatchingLines" regex="^[\s\t]*RhostsAuthentication\s+yes" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "Emulation of the rsh command through the ssh server should be disabled. - '/etc/ssh/sshd_config RhostsRSAAuthentication = no'"
+   msid="107"
+   cceid="CCE-4475-0"
+   severity="Critical"
+   impact="An attacker could use flaws in the RHosts protocol to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-ssh-rhost-rsa-auth'. This will add the line 'RhostsRSAAuthentication no' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*RhostsRSAAuthentication\s+no" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "SSH host-based authentication should be disabled. - '/etc/ssh/sshd_config HostbasedAuthentication = no'"
+   msid="108"
+   cceid="CCE-4370-3"
+   severity="Critical"
+   impact="An attacker could use use host-based authentication to gain access from a compromised host"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-ssh-host-based-auth'. This will add the line 'HostbasedAuthentication no' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*HostbasedAuthentication\s+no" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "Root login via SSH should be disabled. - '/etc/ssh/sshd_config PermitRootLogin = no'"
+   msid="109"
+   cceid="CCE-4387-7"
+   severity="Critical"
+   impact="An attacker could brute force the root password, or hide their command history by logging in directly as root"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-ssh-root-login'. This will add the line 'PermitRootLogin no' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*PermitRootLogin\s+no" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "Remote connections from accounts with empty passwords should be disabled. - '/etc/ssh/sshd_config PermitEmptyPasswords = no'"
+   msid="110"
+   cceid="CCE-3660-8"
+   severity="Critical"
+   impact="An attacker could gain access through password guessing"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-ssh-empty-passwords'. This will add the line 'PermitEmptyPasswords no' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*PermitEmptyPasswords\s+no" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "SSH warning banner should be enabled. - '/etc/ssh/sshd_config Banner = /etc/issue.net'"
+   msid="111"
+   cceid="CCE-4431-3"
+   severity="Informational"
+   impact="Users will not be warned that their actions on the system are monitored"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r configure-ssh-banner'. This will add the line 'Banner /etc/azsec/banner.txt' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*Banner\s+[/a-zA-Z0-9]+" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "Users are not allowed to set environment options for SSH."
+   msid="112"
+   cceid="CCE-14716-5"
+   severity="Warning"
+   impact="An attacker may be able to bypass some access restrictions over SSH"
+   remediation="Remove the line 'PermitUserEnvironment yes' from the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckNoMatchingLines" regex="^[\s\t]*PermitUserEnvironment\s+yes" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "Appropriate ciphers should be used for SSH. (Ciphers aes128-ctr,aes192-ctr,aes256-ctr)"
+   msid="113"
+   cceid="CCE-14491-5"
+   severity="Critical"
+   impact="An attacker could compromise a weakly secured SSH connection"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r configure-ssh-ciphers'. This will add the line 'Ciphers aes128-ctr,aes192-ctr,aes256-ctr' to the file '/etc/ssh/sshd_config'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*Ciphers\s+aes128-ctr,aes192-ctr,aes256-ctr\s*$" path="/etc/ssh/sshd_config"/>
+  </audit>
+
+  <audit
+   description = "The avahi-daemon service should be disabled."
+   msid="114"
+   cceid="CCE-4365-3"
+   severity="Warning"
+   impact="An attacker could use a vulnerability in the avahi daemon to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-avahi-daemon'. This will disable the avahi-daemon service">
+   <check distro="*" command="CheckServiceDisabled" service="avahi-daemon"/>
+  </audit>
+
+  <audit
+   description = "The cups service should be disabled."
+   msid="115"
+   cceid="CCE-4425-5"
+   severity="Warning"
+   impact="An attacker could use a flaw in the cups service to elevate privileges"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-cups'. This will disable the cups service">
+   <check distro="*" command="CheckServiceDisabled" service="cups"/>
+  </audit>
+
+  <audit
+   description = "The dhcpd service should be disabled."
+   msid="116"
+   cceid="CCE-4336-4"
+   severity="Important"
+   impact="An attacker could use dhcpd to provide faulty information to clients, interfering with normal operation."
+   remediation="Remove the isc-dhcp-server package (apt-get remove isc-dhcp-server)">
+   <check distro="*" command="CheckServiceDisabled" service="isc-dhcp-server"/>
+  </audit>
+
+  <audit
+   description = "The isc-dhcp-server package should be uninstalled."
+   msid="117"
+   cceid="CCE-4464-4"
+   severity="Important"
+   impact="An attacker could use dhcpd to provide faulty information to clients, interfering with normal operation."
+   remediation="Remove the isc-dhcp-server package (apt-get remove isc-dhcp-server)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="isc-dhcp-server" />
+  </audit>
+
+  <audit
+   description = "The ntpd service should be enabled."
+   msid="118"
+   cceid="CCE-4376-0"
+   severity="Warning"
+   impact="The system time will drift, resulting in unpredictable issues and failure of some secure protocols"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r install-ntp'. This will install the ntp service.">
+   <check distro="Ubuntu|Debian|SLES=11" command="CheckServiceStatus" service="ntp" expect="running"/>
+   <check distro="CentOS|RedHat|Oracle|SLES=12" command="CheckServiceStatus" service="ntpd" expect="running"/>
+  </audit>
+
+  <audit
+   description = "A remote NTP Server for time synchronization should be specified."
+   msid="119"
+   cceid="CCE-4385-1"
+   severity="Warning"
+   impact="The system time will drift, resulting in unpredictable issues and failure of some secure protocols"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r configure-ntp'. This will configure an ntp server in the file '/etc/ntp.conf'">
+   <check distro="*" command="CheckMatchingLines" regex="^[\s\t]*server|pool\s+" path="/etc/ntp.conf"/>
+  </audit>
+
+  <audit
+   description = "The rpcgssd service should be disabled."
+   msid="126"
+   cceid="CCE-3535-2"
+   severity="Important"
+   impact="An attacker could use a flaw in rpcgssd/nfs to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-rpcgssd'. This will disable the rpcgssd service.">
+   <check distro="*" command="CheckServiceDisabled" service="rpcgssd"/>
+  </audit>
+
+  <audit
+   description = "The rpcidmapd service should be disabled."
+   msid="127"
+   cceid="CCE-3568-3"
+   severity="Important"
+   impact="An attacker could use a flaw in idmapd/nfs to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-rpcidmapd'. This will disable the rpcidmapd service.">
+   <check distro="*" command="CheckServiceDisabled" service="rpcidmapd"/>
+  </audit>
+
+  <audit
+   description = "The netfs service should be disabled"
+   msid="128"
+   cceid="CCE-4533-6"
+   severity="Important"
+   impact="An attacker could download malware over a netfs connection"
+   remediation="Remove all nfs shares from /etc/fstab">
+   <check distro="*" command="CheckNetfs" />
+  </audit>
+
+  <audit
+   description = "The portmap service should be disabled."
+   msid="129"
+   cceid="CCE-4550-0"
+   severity="Important"
+   impact="An attacker could use a flaw in portmap to gain access"
+   remediation="Run the command '/usr/local/bin/azsecd remediate -r disable-rpcbind'. This will disable the rpcbind service.">
+   <check distro="*" command="CheckServiceDisabled" service="rpcbind"/>
+  </audit>
+
+  <audit
+   description = "The rpcsvcgssd service should be disabled."
+   msid="130"
+   cceid="CCE-4491-7"
+   severity="Important"
+   impact="An attacker could use a flaw in rpcsvcgssd to gain access"
+   remediation="Remove the line 'NEED_SVCGSSD = yes' from the file '/etc/inetd.conf'">
+   <check distro="*" command="CheckNoMatchingLinesIfExists" regex="^[\s\t]*NEED_SVCGSSD\s*=\s*&quot;yes&quot;" path="/etc/inetd.conf"/>
+  </audit>
+
+  <audit
+   description = "The talk-server package should be uninstalled. (uninstalled)"
+   msid="148"
+   cceid="CCE-18151-1"
+   severity="Warning"
+   impact="An attacker could send messages to the terminal of legitimate users"
+   remediation="Uninstall the talkd package (apt-get remove talkd)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="talkd"/>
+  </audit>
+
+  <audit
+   description = "The irda service should be disabled. (disabled)"
+   msid="150"
+   cceid="CCE-18244-4"
+   severity="Important"
+   impact="An attacker could intercept or manipulate wireless infra-red communications"
+   remediation="Uninstall the irda-utils package (apt-get remove irda-utils)">
+   <check distro="*" command="CheckServiceDisabled" service="irda-utils"/>
+  </audit>
+
+  <audit
+   description = "The irda-utils package should be uninstalled. (uninstalled)"
+   msid="151"
+   cceid="CCE-17504-2"
+   severity="Important"
+   impact="An attacker could intercept or manipulate wireless infra-red communications"
+   remediation="Uninstall the irda-utils package (apt-get remove irda-utils)">
+   <check distro="*" command="CheckPackageNotInstalled" packagename="irda-utils"/>
+  </audit>
+
+  <audit
+   description = "Firewall access to printing service should be disabled. (disabled)"
+   msid="152.1"
+   cceid="CCE-3649-1"
+   severity="Warning"
+   impact="An attacker could use a flaw in the printing service to gain access"
+   remediation="Disable any firewall rules that allow tcp port 631">
+   <check distro="*" command="CheckFirewallBlock" protocol="tcp" port="631" />
+  </audit>
+
+  <audit
+   description = "Firewall access to printing service should be disabled. (disabled)"
+   msid="152.2"
+   cceid="CCE-3649-1"
+   severity="Warning"
+   impact="An attacker could use a flaw in the printing service to gain access"
+   remediation="Disable any firewall rules that allow tcp port 515">
+   <check distro="*" command="CheckFirewallBlock" protocol="tcp" port="515" />
+  </audit>
+
+  <audit
+   description = "Firewall access to avahi service should be disabled. (disabled)"
+   msid="153"
+   cceid="CCE-18037-2"
+   severity="Warning"
+   impact="An attacker could use a flaw in the avahi service to gain access"
+   remediation="Disable any firewall rules that allow tcp port 5353">
+   <check distro="*" command="CheckFirewallBlock" protocol="tcp" port="5353" />
+  </audit>
+
+  <audit
+   description = "Only root should be in the root group"
+   msid="157.3"
+   cceid="CCE-XXXXX-3"
+   severity="Critical"
+   impact="An attacker could compromise a non-root account and assume root privileges."
+   remediation="In the /etc/group file, remove any accounts from the root group (root:x:0:)">
+   <check distro="*" command="CheckMatchingLines" regex="^root:x:0:$" path="/etc/group"/>
+  </audit>
+
+  <audit
+   description = "Only root should be in the root group"
+   msid="157.4"
+   cceid="CCE-XXXXX-4"
+   severity="Critical"
+   impact="An attacker could compromise a non-root account and assume root privileges."
+   remediation="In the /etc/passwd file, confirm only one account is in the root group">
+   <check distro="*" command="CheckNoMatchingLines" filter="^root" regex="^[^:]:[^:]:[^:]:[^:]:root:" path="/etc/passwd"/>
+  </audit>
+
+  <audit
+   description = "Encryption must be used in shadow file"
+   msid="157.7"
+   cceid="CCE-14063-2"
+   severity="Critical"
+   impact="An attacker could retrieve login credentials from an unencrypted or poorly encrypted shadow file"
+   remediation="Add the line 'ENCRYPT_METHOD SHA512' to the file '/etc/login.defs'">
+   <check distro="!SLES=11" command="CheckMatchingLines" regex="^\s*ENCRYPT_METHOD\s+[A-Z0-9]+$" path="/etc/login.defs"/>
+  </audit>
+
+ </audits>
+</data>
