@@ -1,9 +1,9 @@
 require 'test/unit'
-
+require 'mocha/test_unit'
 require_relative '../../../source/code/plugins/patch_management_lib'
 require_relative '../../../source/code/plugins/oms_common'
 require_relative 'omstestlib'
-require_relative 'oms_common_test'
+#require_relative 'oms_common_test'
 
 class LinuxUpdatesTest < Test::Unit::TestCase
 
@@ -446,4 +446,38 @@ class LinuxUpdatesTest < Test::Unit::TestCase
     data_items_dedup = LinuxUpdates::removeDuplicateCollectionNames(availableUpdates)
     assert_equal(collectionNamesSet.size, data_items_dedup.size, "Deduplication failed")
   end
+
+
+ def test_filter_updaterun_progress
+    fakeEndDate = '2016-10-20  15:00:29'
+    
+    logContent = 
+    [
+      "Commandline: aptdaemon role='role-install-packages' sender=':1.93\'",
+      "Install: cairo-dock-data:amd64 (3.4.1-0ubuntu1, automatic), gnome-session:amd64 (3.18.1.2-1ubuntu1.16.04.2, automatic)",
+      "Upgrade: gnome-settings-daemon-schemas:amd64 (3.18.2-0ubuntu3, 3.18.2-0ubuntu3.1), gnome-session-common:amd64 (3.18.1.2-1ubuntu1.16.04.1)",
+      "Requested-By: shujun (1000)",
+      "End-Date: " + fakeEndDate
+    ].join("\n");
+    
+    fakeStartDate = '2016-10-20  15:00:24'
+    record = 
+    {
+      'start-date' => fakeStartDate, 
+      'apt-logs' => logContent
+    }
+    
+    linuxUpdates = LinuxUpdates.new
+    fakeUpdateRunName = "Fake_Update_Run_Name"
+    linuxUpdates.expects(:getUpdateRunName).returns(fakeUpdateRunName)
+    result = linuxUpdates.process_update_run(record, 'tag', 'HostName', Time.now)
+    assert(result != nil)
+    assert_equal(4, result['DataItems'].size)
+    assert_equal("HostName", result['DataItems'][0]["Computer"])
+    assert_equal(fakeUpdateRunName, result['DataItems'][0]["UpdateRunName"])
+    assert_equal('cairo-dock-data:amd64 (3.4.1-0ubuntu1, automatic)', result['DataItems'][0]["UpdateTitle"])
+    assert_equal(fakeEndDate, result['DataItems'][0]["EndTime"])
+    assert_equal(fakeStartDate, result['DataItems'][0]["StartTime"])
+  end
+  
 end
