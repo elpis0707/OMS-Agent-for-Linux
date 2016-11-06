@@ -14,12 +14,12 @@ module OMS
         # ------------------------------------------------------
         def self.transform_and_wrap(results, host, time)		
             if results == nil
-                @@log.debug "Baseline Assessment failed; Empty input"
+                @@log.error "Baseline Assessment failed; Empty input"
                 return nil, nil
             end
 
             if results["results"] == nil 
-                @@log.debug "Baseline Assessment failed; Invalid input:" + results.inspect
+                @@log.error "Baseline Assessment failed; Invalid input:" + results.inspect
                 return nil, nil
             end
 
@@ -43,7 +43,7 @@ module OMS
 
             baseline_summary_blob = self.calculate_summary(results, host, time)
 
-            @@log.debug "Baseline Summary: " + baseline_summary_blob.inspect	
+            @@log.info "Baseline Summary: " + baseline_summary_blob.inspect	
 
             return baseline_blob, baseline_summary_blob
         end # self.transform_and_wrap
