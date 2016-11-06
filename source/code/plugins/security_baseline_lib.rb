@@ -4,7 +4,7 @@ require 'securerandom' # SecureRandom.uuid
 require_relative 'oms_common'
 
 module OMS
-    class Baseline
+    class SecurityBaseline
 
         @@log = nil
         def self.log= (value)
@@ -14,12 +14,12 @@ module OMS
         # ------------------------------------------------------
         def self.transform_and_wrap(results, host, time)		
             if results == nil
-                @@log.error "Baseline Assessment failed; Empty input"
+                @@log.error "Security Baseline Assessment failed; Empty input"
                 return nil, nil
             end
 
             if results["results"] == nil 
-                @@log.error "Baseline Assessment failed; Invalid input:" + results.inspect
+                @@log.error "Security Baseline Assessment failed; Invalid input:" + results.inspect
                 return nil, nil
             end
 
@@ -29,7 +29,7 @@ module OMS
             scan_time = results["scan_time"]
             assessment_id = results["assessment_id"]
 
-            baseline_blob = {
+            security_baseline_blob = {
                 "DataType"=>"SECURITY_BASELINE_BLOB", 
                 "IPName"=>"Security",
                 "DataItems"=>[
@@ -38,14 +38,14 @@ module OMS
 
             asm_baseline_results.each do |asm_baseline_result|
                 oms_baseline_result = self.transform_asm_2_oms(asm_baseline_result, scan_time, host, assessment_id)		
-                baseline_blob["DataItems"].push(oms_baseline_result)
+                security_baseline_blob["DataItems"].push(oms_baseline_result)
             end 
 
-            baseline_summary_blob = self.calculate_summary(results, host, time)
+            security_baseline_summary_blob = self.calculate_summary(results, host, time)
 
-            @@log.info "Baseline Summary: " + baseline_summary_blob.inspect	
+            @@log.info "Security Baseline Summary: " + security_baseline_summary_blob.inspect	
 
-            return baseline_blob, baseline_summary_blob
+            return security_baseline_blob, security_baseline_summary_blob
         end # self.transform_and_wrap
     
         # ------------------------------------------------------	   
@@ -77,7 +77,7 @@ module OMS
 
             percentage_of_passed_rules = ((asm_baseline_results.length - all_failed_rules) * 100.0 / asm_baseline_results.length).round
     
-            baseline_summary_blob = {
+            security_baseline_summary_blob = {
                 "DataType" => "SECURITY_BASELINE_SUMMARY_BLOB",
                 "IPName" => "Security",
                 "DataItems" => [
@@ -94,7 +94,7 @@ module OMS
                 ] 
             }
 
-            return baseline_summary_blob
+            return security_baseline_summary_blob
         end # calculate_summary 
 
         # ------------------------------------------------------

@@ -1,11 +1,11 @@
  
-require_relative 'baseline_lib'
+require_relative 'security_baseline_lib'
 require_relative 'oms_common' 
 
 module Fluent
-  class BaselineFilter < Filter
+  class SecurityBaselineFilter < Filter
 
-    Fluent::Plugin.register_filter('filter_baseline', self)
+    Fluent::Plugin.register_filter('filter_security_baseline', self)
 
     # config_param works like other plugins
     config_param :time, default: 0
@@ -20,7 +20,7 @@ module Fluent
         super
         # This is the first method to be called when it starts running
         # Use it to allocate resources, etc.
-        OMS::Baseline.log = @log
+        OMS::SecurityBaseline.log = @log
     end
 
     def shutdown
@@ -30,9 +30,9 @@ module Fluent
     end
 
     def filter(tag, time, record)       
-        baseline_blob, baseline_summary_blob = OMS::Baseline.transform_and_wrap(record, @hostname, time)
-        Fluent::Engine.emit("oms.baseline_summary", time, baseline_summary_blob)	
-        return baseline_blob
+        security_baseline_blob, security_baseline_summary_blob = OMS::SecurityBaseline.transform_and_wrap(record, @hostname, time)
+        Fluent::Engine.emit("oms.security_baseline_summary", time, security_baseline_summary_blob)	
+        return security_baseline_blob
     end # filter
   end # class
 end # module
